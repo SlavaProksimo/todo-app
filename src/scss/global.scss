@@ -1,9 +1,20 @@
 @use "./_variables" as *;
-body {
-	font-family: "Kanit", sans-serif;
+html,
+body,
+#root {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	font-family: "Kanit";
 }
+
 h1 {
 	color: $black;
+}
+h2 {
+	font-size: 24px;
+	color: $black;
+	font-weight: 500;
 }
 
 input::placeholder {
@@ -40,7 +51,9 @@ li {
 	font-size: 20px;
 	font-weight: 500;
 	cursor: pointer;
-
+	line-height: 100%;
+	text-transform: uppercase;
+	letter-spacing: 0%;
 	&:nth-child(3) {
 		text-decoration: line-through;
 		color: #25252580;
@@ -53,4 +66,32 @@ hr {
 	height: 1px;
 	opacity: 50%;
 	margin: 17px 0px 17px 0px;
+}
+
+input {
+	height: 38px;
+	border: 1px solid $primary;
+	border-radius: 5px;
+	color: $primary;
+	&:focus {
+		-webkit-box-shadow: -1px 0px 15px 8px rgba(108, 99, 255, 0.42);
+		-moz-box-shadow: -1px 0px 15px 8px rgba(108, 99, 255, 0.42);
+		box-shadow: -1px 0px 15px 8px rgba(108, 99, 255, 0.42);
+		border: 2px solid $primary;
+		outline: none;
+
+		&::placeholder {
+			opacity: 0;
+		}
+	}
+}
+
+button {
+	background-color: $primary;
+	font-size: 18px;
+	border-radius: 5px;
+}
+
+button :active {
+	transform: scale(0.95);
 }

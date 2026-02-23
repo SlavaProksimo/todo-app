@@ -1,10 +1,5 @@
 @use "../../scss/variables" as *;
 .btn-change__background {
-	background-color: $primary;
 	width: 38px;
 	height: 38px;
-	border-radius: 5px;
-}
-.btn-change__background:active {
-	transform: scale(0.95);
 }

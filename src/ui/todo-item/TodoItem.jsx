@@ -1,16 +1,22 @@
 const TodoItem = (props) => {
-  const { title = "" } = props;
+  const { title = "", isDone, index, tasks, setTasks } = props;
 
   const onClickEdit = () => {
     console.log("Реадктировать задачу");
   };
 
   const onClickDelete = () => {
-    console.log("Удалить задачу");
+    const deleteTask = tasks.filter((t, i) => i !== index);
+    setTasks(deleteTask);
   };
 
   const onClickChange = (event) => {
-    console.log(event.target.checked);
+    const updatedTasks = [...tasks];
+    updatedTasks[index] = {
+      ...updatedTasks[index],
+      isDone: event.target.checked,
+    };
+    setTasks(updatedTasks);
   };
 
   return (
@@ -20,8 +26,17 @@ const TodoItem = (props) => {
           className="todo-list__input"
           type="checkbox"
           onChange={onClickChange}
+          checked={isDone}
         />
-        {title}
+        <span
+          style={{
+            textDecoration: isDone ? "line-through" : "none",
+            color: isDone ? "#25252580" : "",
+          }}
+        >
+          {" "}
+          {title}
+        </span>
       </div>
       <div className="li-interaction">
         <button

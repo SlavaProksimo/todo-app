@@ -8,7 +8,7 @@ const Search = () => {
     <div className="todo-search__block">
       <div className="input-svg">
         <input
-          className="todo-search__block-input"
+          className="input todo-search__block-input"
           type="text"
           placeholder="Serach note..."
           onInput={onInputSearch}
