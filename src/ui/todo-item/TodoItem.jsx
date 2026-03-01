@@ -1,16 +1,28 @@
 const TodoItem = (props) => {
-  const { title = "", isDone, index, tasks, setTasks } = props;
+  const {
+    title = "",
+    isDone,
+    index,
+    tasks,
+    setTasks,
+    setOpen,
+    setTaskToEdit,
+    setNewTaskTitle,
+  } = props;
 
-  const onClickEdit = () => {
-    console.log("Реадктировать задачу");
+  //Редактировать задачу
+  const handleEditClick = (e) => {
+    e.stopPropagation();
+    setNewTaskTitle(title);
+    setTaskToEdit(index);
+    setOpen(true);
   };
-
+  //Удалить задачу
   const onClickDelete = () => {
     const deleteTask = tasks.filter((t, i) => i !== index);
     setTasks(deleteTask);
   };
-
-  const onClickChange = (event) => {
+  const handleCheckboxChange = (event) => {
     const updatedTasks = [...tasks];
     updatedTasks[index] = {
       ...updatedTasks[index],
@@ -25,7 +37,7 @@ const TodoItem = (props) => {
         <input
           className="todo-list__input"
           type="checkbox"
-          onChange={onClickChange}
+          onChange={handleCheckboxChange}
           checked={isDone}
         />
         <span
@@ -42,7 +54,7 @@ const TodoItem = (props) => {
         <button
           className="li-interaction__todo-editing"
           type="button"
-          onClick={onClickEdit}
+          onClick={handleEditClick}
         >
           <svg
             className="li-interaction__todo-editing__svg"

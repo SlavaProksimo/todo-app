@@ -1,12 +1,13 @@
-const Select = () => {
+const Select = ({ setFilter }) => {
   const onChangekSelect = (event) => {
-    console.log(event.target.value);
+    setFilter(event.target.value);
   };
+
   return (
     <select name="todo-filter" onChange={onChangekSelect}>
-      <option>All</option>
-      <option>Complete</option>
-      <option>Incomplete</option>
+      <option value="All">All</option>
+      <option value="Complete">Complete</option>
+      <option value="Incomplete">Incomplete</option>
     </select>
   );
 };

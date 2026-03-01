@@ -1,8 +1,7 @@
-const ButtonAddTodo = ({ open, setOpen, toggleWrapper }) => {
+const ButtonAddTodo = ({ setOpen }) => {
   const onClickAddTodo = (e) => {
     e.stopPropagation();
-    setOpen(!open);
-    toggleWrapper();
+    setOpen((prev) => !prev);
   };
   return (
     <button className="btn btn-addTodo" type="button" onClick={onClickAddTodo}>
