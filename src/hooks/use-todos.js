@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
-export const useTodos = ({ closeModal }) => {
+import { useEffect, useRef, useState } from "react";
+export const useTodos = ({ closeModal, open }) => {
   const [tasks, setTasks] = useState(() => {
+    //Сохраняем тудушки после перезагрузки страницы
     const savedTasks = localStorage.getItem("tasks");
     if (savedTasks) {
       return JSON.parse(savedTasks);
@@ -11,6 +12,14 @@ export const useTodos = ({ closeModal }) => {
   const [searchTask, setSearchTask] = useState("");
   const [filter, setFilter] = useState("All");
   const [taskToEdit, setTaskToEdit] = useState(null); // Для редактирование задачи
+
+  const inputRef = useRef(null);
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [open]);
+
   //Сохраняем тудушки после перезагрузки страницы
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -69,6 +78,7 @@ export const useTodos = ({ closeModal }) => {
   };
 
   const finalTodos = filteredBySelect();
+
   return {
     tasks,
     setTasks,
@@ -81,7 +91,8 @@ export const useTodos = ({ closeModal }) => {
     handleInputChange,
     showNotFound,
     finalTodos,
-    setTaskToEdit,
     taskToEdit,
+    setTaskToEdit,
+    inputRef,
   };
 };

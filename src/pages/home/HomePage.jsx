@@ -31,7 +31,8 @@ const HomePage = () => {
     finalTodos,
     setTaskToEdit,
     taskToEdit,
-  } = useTodos({ closeModal });
+    inputRef,
+  } = useTodos({ closeModal, open });
 
   return (
     <div className="general-wrapper" onMouseDown={closeModal}>
@@ -66,6 +67,7 @@ const HomePage = () => {
           newTaskTitle={newTaskTitle}
           setNewTaskTitle={setNewTaskTitle}
           onApply={addNewTask}
+          inputRef={inputRef}
         />
       )}
       {open && taskToEdit !== null && (
@@ -74,6 +76,7 @@ const HomePage = () => {
           newTaskTitle={newTaskTitle}
           setNewTaskTitle={setNewTaskTitle}
           onApply={updateTask}
+          inputRef={inputRef}
         />
       )}
     </div>

@@ -1,4 +1,10 @@
-const TodoAdd = ({ close, newTaskTitle, setNewTaskTitle, onApply }) => {
+const TodoAdd = ({
+  close,
+  newTaskTitle,
+  setNewTaskTitle,
+  onApply,
+  inputRef,
+}) => {
   return (
     <>
       <div className="overlay"></div>
@@ -13,6 +19,7 @@ const TodoAdd = ({ close, newTaskTitle, setNewTaskTitle, onApply }) => {
             placeholder="Input your note..."
             value={newTaskTitle}
             onInput={(event) => setNewTaskTitle(event.target.value)}
+            ref={inputRef}
           />
           <div className="todo-add__btn-box">
             <button
