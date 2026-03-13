@@ -1,11 +1,8 @@
 import { memo, useCallback } from "react";
 const Select = ({ setFilter }) => {
-  const onChangekSelect = useCallback(
-    (event) => {
-      setFilter(event.target.value);
-    },
-    [setFilter],
-  );
+  const onChangekSelect = (event) => {
+    setFilter(event.target.value);
+  };
 
   return (
     <select name="todo-filter" onChange={onChangekSelect}>

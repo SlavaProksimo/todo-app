@@ -1,6 +1,5 @@
 import { memo } from "react";
 
-memo;
 const NotFound = () => {
   return (
     <div className="not-found">

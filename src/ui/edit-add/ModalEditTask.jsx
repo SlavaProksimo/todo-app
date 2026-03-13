@@ -1,10 +1,11 @@
-const ModalEditTask = ({
-  close,
-  newTaskTitle,
-  setNewTaskTitle,
-  onApply,
-  inputRef,
-}) => {
+import { useRef, useEffect } from "react";
+const ModalEditTask = ({ close, newTaskTitle, onApply, open }) => {
+  const inputRef = useRef(null);
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [open]);
   return (
     <>
       <div className="overlay"></div>
@@ -17,8 +18,10 @@ const ModalEditTask = ({
           <input
             className="todo-add__input"
             placeholder="Edit your note..."
-            value={newTaskTitle}
-            onInput={(event) => setNewTaskTitle(event.target.value)}
+            defaultValue={newTaskTitle.current}
+            onInput={(e) => {
+              newTaskTitle.current = e.target.value;
+            }}
             ref={inputRef}
           />
           <div className="todo-add__btn-box">

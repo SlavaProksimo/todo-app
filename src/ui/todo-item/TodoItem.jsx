@@ -1,41 +1,40 @@
-import { memo, useCallback } from "react";
+import { useCallback } from "react";
+import clsx from "clsx";
 const TodoItem = (props) => {
   const {
     title = "",
     isDone,
-    index,
-    tasks,
     setTasks,
     setOpen,
-    setTaskToEdit,
-    setNewTaskTitle,
+    taskToEdit,
+    newTaskTitle,
+    id,
   } = props;
 
   //Редактировать задачу
   const handleEditClick = useCallback(
     (e) => {
       e.stopPropagation();
-      setNewTaskTitle(title);
-      setTaskToEdit(index);
+      newTaskTitle.current = title;
+      taskToEdit.current = id;
       setOpen(true);
     },
-    [title, index, setNewTaskTitle, setTaskToEdit, setOpen],
+    [title, newTaskTitle, taskToEdit, setOpen, id],
   );
   //Удалить задачу
   const onClickDelete = useCallback(() => {
-    const deleteTask = tasks.filter((t, i) => i !== index);
-    setTasks(deleteTask);
-  }, [setTasks, tasks]);
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+  }, [setTasks, id]);
+  //отмечаем галочкой
   const handleCheckboxChange = useCallback(
     (event) => {
-      const updatedTasks = [...tasks];
-      updatedTasks[index] = {
-        ...updatedTasks[index],
-        isDone: event.target.checked,
-      };
-      setTasks(updatedTasks);
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === id ? { ...task, isDone: event.target.checked } : task,
+        ),
+      );
     },
-    [tasks, setTasks],
+    [setTasks, id],
   );
 
   return (
@@ -48,12 +47,11 @@ const TodoItem = (props) => {
           checked={isDone}
         />
         <span
-          style={{
-            textDecoration: isDone ? "line-through" : "none",
-            color: isDone ? "#25252580" : "",
-          }}
+          className={clsx({
+            "todo-list__span": true,
+            "todo-title--completed": isDone,
+          })}
         >
-          {" "}
           {title}
         </span>
       </div>
@@ -114,4 +112,4 @@ const TodoItem = (props) => {
   );
 };
 
-export default memo(TodoItem);
+export default TodoItem;

@@ -1,31 +1,28 @@
-import { memo, useCallback } from "react";
-const TodoAdd = ({
-  close,
-  newTaskTitle,
-  setNewTaskTitle,
-  onApply,
-  inputRef,
-}) => {
-  const handleMouseDown = useCallback((e) => {
-    e.stopPropagation();
-  }, []);
-  const handleChange = useCallback(
-    (e) => {
-      setNewTaskTitle(e.target.value);
-    },
-    [setNewTaskTitle],
-  );
+import { memo, useRef, useEffect } from "react";
+const TodoAdd = ({ close, newTaskTitle, onApply, open }) => {
+  //Автофокус с помощью useRef
+  const inputRef = useRef(null);
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [open]);
   return (
     <>
       <div className="overlay"></div>
-      <div className="todo-add__general-box" onMouseDown={handleMouseDown}>
+      <div
+        className="todo-add__general-box"
+        onMouseDown={(e) => e.stopPropagation()}
+      >
         <div className="todo-add__box">
           <h2 className="todo-add__title">New Note</h2>
           <input
             className="todo-add__input"
             placeholder="Input your note..."
-            value={newTaskTitle}
-            onInput={handleChange}
+            defaultValue={newTaskTitle.current}
+            onInput={(e) => {
+              newTaskTitle.current = e.target.value;
+            }}
             ref={inputRef}
           />
           <div className="todo-add__btn-box">

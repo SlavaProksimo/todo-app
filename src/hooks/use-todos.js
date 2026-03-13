@@ -1,24 +1,25 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 export const useTodos = ({ closeModal, open }) => {
+  //Сохраняем тудушки после перезагрузки страницы
   const [tasks, setTasks] = useState(() => {
-    //Сохраняем тудушки после перезагрузки страницы
-    const savedTasks = localStorage.getItem("tasks");
-    if (savedTasks) {
-      return JSON.parse(savedTasks);
+    try {
+      const savedTasks = localStorage.getItem("tasks");
+      if (savedTasks) {
+        return JSON.parse(savedTasks);
+      }
+      return [];
+    } catch (error) {
+      console.error("Ошибка LocalStorage");
+      return [];
     }
-    return [];
   });
-  const [newTaskTitle, setNewTaskTitle] = useState("");
+
+  const newTaskTitle = useRef("");
+
   const [searchTask, setSearchTask] = useState("");
   const [filter, setFilter] = useState("All");
-  const [taskToEdit, setTaskToEdit] = useState(null); // Для редактирование задачи
 
-  const inputRef = useRef(null);
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [open]);
+  const taskToEdit = useRef(null); // Для редактирование задачи
 
   //Сохраняем тудушки после перезагрузки страницы
   useEffect(() => {
@@ -27,40 +28,42 @@ export const useTodos = ({ closeModal, open }) => {
 
   //Проверка для кнопки Apply, чтобы закрывать модалку только если было что-то введено
   const addNewTask = useCallback(() => {
-    if (newTaskTitle.trim().length > 0) {
+    if (newTaskTitle.current.trim().length > 0) {
       const newTask = {
-        title: newTaskTitle.trim(),
+        id: crypto.randomUUID(),
+        title: newTaskTitle.current.trim(),
         isDone: false,
       };
       setTasks((prev) => [...prev, newTask]);
-      setNewTaskTitle("");
+      newTaskTitle.current = "";
       closeModal();
     }
   }, [newTaskTitle, closeModal]);
   // Редактируем задачу
   const updateTask = useCallback(() => {
-    if (taskToEdit !== null) {
-      const updatedTasks = tasks.map((task, index) => {
-        if (index === taskToEdit && newTaskTitle.trim().length > 0) {
+    if (taskToEdit.current !== null) {
+      const updatedTasks = tasks.map((task) => {
+        if (
+          task.id === taskToEdit.current &&
+          newTaskTitle.current.trim().length > 0
+        ) {
           return {
             ...task,
-            title: newTaskTitle,
+            title: newTaskTitle.current,
           };
         }
         return task;
       });
       setTasks(updatedTasks);
       closeModal();
+      taskToEdit.current = null;
     }
-  }, [taskToEdit, tasks, closeModal, newTaskTitle, taskToEdit]);
+  }, [tasks, closeModal, newTaskTitle]);
 
-  const handleInputChange = useCallback(
-    (event) => {
-      const value = event.target.value;
-      setSearchTask(value);
-    },
-    [setSearchTask],
-  );
+  const handleInputChange = (event) => {
+    const value = event.target.value;
+    setSearchTask(value);
+  };
   //поиск задач
   const filteredTodos = useMemo(() => {
     return searchTask
@@ -85,11 +88,17 @@ export const useTodos = ({ closeModal, open }) => {
 
   const finalTodos = filteredBySelect;
 
+  useEffect(() => {
+    if (!open) {
+      newTaskTitle.current = "";
+      taskToEdit.current = null;
+    }
+  }, [open]);
+
   return {
     tasks,
     setTasks,
     newTaskTitle,
-    setNewTaskTitle,
     searchTask,
     setFilter,
     addNewTask,
@@ -98,7 +107,5 @@ export const useTodos = ({ closeModal, open }) => {
     showNotFound,
     finalTodos,
     taskToEdit,
-    setTaskToEdit,
-    inputRef,
   };
 };

@@ -13,15 +13,12 @@ const HomePage = () => {
   //Закрыть модалку
   const closeModal = () => {
     setOpen(false);
-    setNewTaskTitle("");
-    setTaskToEdit(null);
   };
 
   const {
     tasks,
     setTasks,
     newTaskTitle,
-    setNewTaskTitle,
     searchTask,
     setFilter,
     addNewTask,
@@ -29,9 +26,7 @@ const HomePage = () => {
     handleInputChange,
     showNotFound,
     finalTodos,
-    setTaskToEdit,
     taskToEdit,
-    inputRef,
   } = useTodos({ closeModal, open });
 
   return (
@@ -53,30 +48,27 @@ const HomePage = () => {
               setTasks={setTasks}
               open={open}
               setOpen={setOpen}
-              setNewTaskTitle={setNewTaskTitle}
               newTaskTitle={newTaskTitle}
-              setTaskToEdit={setTaskToEdit}
+              taskToEdit={taskToEdit}
             />
           </div>
           <ButtonAddTodo open={open} setOpen={setOpen} />
         </div>
       </div>
-      {open && taskToEdit === null && (
+      {open && taskToEdit.current === null && (
         <TodoAdd
           close={closeModal}
           newTaskTitle={newTaskTitle}
-          setNewTaskTitle={setNewTaskTitle}
           onApply={addNewTask}
-          inputRef={inputRef}
+          open={open}
         />
       )}
-      {open && taskToEdit !== null && (
+      {open && taskToEdit.current !== null && (
         <ModalEditTask
           close={closeModal}
           newTaskTitle={newTaskTitle}
-          setNewTaskTitle={setNewTaskTitle}
           onApply={updateTask}
-          inputRef={inputRef}
+          open={open}
         />
       )}
     </div>
