@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import ButtonAddTodo from "@/ui/button/ButtonAddTodo";
 import TodoAdd from "@/ui/todo-add/todoAdd";
 import NewTasks from "ui/new-tasks/NewTasks";
@@ -7,7 +7,7 @@ import NotFound from "@/ui/not-found/NotFound";
 import { useTodos } from "@/hooks/use-todos";
 import ModalEditTask from "@/ui/edit-add/ModalEditTask";
 import clsx from "clsx";
-import { ThemeContext } from "@/context/themeContext";
+import { useTheme } from "@/context/ThemeProvider";
 
 const HomePage = () => {
   const [open, setOpen] = useState(false);
@@ -15,12 +15,12 @@ const HomePage = () => {
   //Закрыть модалку
   const closeModal = () => {
     setOpen(false);
+    editTitleRef.current = "";
   };
 
   const {
     tasks,
     setTasks,
-    newTaskTitle,
     searchTask,
     setFilter,
     addNewTask,
@@ -28,10 +28,12 @@ const HomePage = () => {
     handleInputChange,
     showNotFound,
     finalTodos,
-    taskToEdit,
-  } = useTodos({ closeModal, open });
+    handleEditClick,
+    editTitleRef,
+    currentTaskId,
+  } = useTodos({ closeModal, open, setOpen });
 
-  const { theme } = useContext(ThemeContext);
+  const { theme } = useTheme();
 
   return (
     <div
@@ -39,7 +41,6 @@ const HomePage = () => {
         dark: theme === true,
         light: theme === false,
       })}
-      onMouseDown={closeModal}
     >
       <div className="container">
         <div className="todo">
@@ -58,27 +59,21 @@ const HomePage = () => {
               setTasks={setTasks}
               open={open}
               setOpen={setOpen}
-              newTaskTitle={newTaskTitle}
-              taskToEdit={taskToEdit}
+              onEditClick={handleEditClick}
             />
           </div>
           <ButtonAddTodo open={open} setOpen={setOpen} />
         </div>
       </div>
-      {open && taskToEdit.current === null && (
-        <TodoAdd
-          close={closeModal}
-          newTaskTitle={newTaskTitle}
-          onApply={addNewTask}
-          open={open}
-        />
+      {open && currentTaskId === null && (
+        <TodoAdd close={closeModal} onApply={addNewTask} open={open} />
       )}
-      {open && taskToEdit.current !== null && (
+      {open && currentTaskId !== null && (
         <ModalEditTask
           close={closeModal}
-          newTaskTitle={newTaskTitle}
           onApply={updateTask}
           open={open}
+          initialValue={editTitleRef.current}
         />
       )}
     </div>

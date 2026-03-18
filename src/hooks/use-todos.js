@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-export const useTodos = ({ closeModal, open }) => {
-  //Сохраняем тудушки после перезагрузки страницы
-  const [tasks, setTasks] = useState(() => {
+export const useTodos = ({ closeModal, open, setOpen }) => {
+  const getDataFromLocalStorage = () => {
     try {
       const savedTasks = localStorage.getItem("tasks");
       if (savedTasks) {
@@ -12,53 +11,63 @@ export const useTodos = ({ closeModal, open }) => {
       console.error("Ошибка LocalStorage");
       return [];
     }
-  });
+  };
 
-  const newTaskTitle = useRef("");
+  //Сохраняем тудушки после перезагрузки страницы
+  const [tasks, setTasks] = useState(getDataFromLocalStorage());
 
   const [searchTask, setSearchTask] = useState("");
   const [filter, setFilter] = useState("All");
 
-  const taskToEdit = useRef(null); // Для редактирование задачи
-
+  const [currentTaskId, setCurrentTaskId] = useState(null); // Для редактирование задачи
+  // Функция для обработки клика по редактированию
+  const editTitleRef = useRef("");
+  const handleEditClick = (taskId, taskTitle) => {
+    setCurrentTaskId(taskId);
+    editTitleRef.current = taskTitle; // Сохраняем заголовок
+    setOpen(true);
+  };
   //Сохраняем тудушки после перезагрузки страницы
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
 
   //Проверка для кнопки Apply, чтобы закрывать модалку только если было что-то введено
-  const addNewTask = useCallback(() => {
-    if (newTaskTitle.current.trim().length > 0) {
-      const newTask = {
-        id: crypto.randomUUID(),
-        title: newTaskTitle.current.trim(),
-        isDone: false,
-      };
-      setTasks((prev) => [...prev, newTask]);
-      newTaskTitle.current = "";
-      closeModal();
-    }
-  }, [newTaskTitle, closeModal]);
+  const addNewTask = useCallback(
+    (title) => {
+      if (title.trim().length > 0) {
+        const newTask = {
+          id: crypto.randomUUID(),
+          title: title.trim(),
+          isDone: false,
+        };
+        setTasks((prev) => [...prev, newTask]);
+        closeModal();
+      }
+    },
+    [closeModal],
+  );
   // Редактируем задачу
-  const updateTask = useCallback(() => {
-    if (taskToEdit.current !== null) {
-      const updatedTasks = tasks.map((task) => {
-        if (
-          task.id === taskToEdit.current &&
-          newTaskTitle.current.trim().length > 0
-        ) {
-          return {
-            ...task,
-            title: newTaskTitle.current,
-          };
-        }
-        return task;
-      });
-      setTasks(updatedTasks);
-      closeModal();
-      taskToEdit.current = null;
-    }
-  }, [tasks, closeModal, newTaskTitle]);
+  const updateTask = useCallback(
+    (title) => {
+      if (currentTaskId !== null) {
+        const updatedTasks = tasks.map((task) => {
+          if (task.id === currentTaskId && title.trim().length > 0) {
+            return {
+              ...task,
+              title: title,
+            };
+          }
+          return task;
+        });
+        setTasks(updatedTasks);
+        closeModal();
+        setCurrentTaskId(null);
+        editTitleRef.current = "";
+      }
+    },
+    [tasks, closeModal, currentTaskId],
+  );
 
   const handleInputChange = (event) => {
     const value = event.target.value;
@@ -88,17 +97,9 @@ export const useTodos = ({ closeModal, open }) => {
 
   const finalTodos = filteredBySelect;
 
-  useEffect(() => {
-    if (!open) {
-      newTaskTitle.current = "";
-      taskToEdit.current = null;
-    }
-  }, [open]);
-
   return {
     tasks,
     setTasks,
-    newTaskTitle,
     searchTask,
     setFilter,
     addNewTask,
@@ -106,6 +107,9 @@ export const useTodos = ({ closeModal, open }) => {
     handleInputChange,
     showNotFound,
     finalTodos,
-    taskToEdit,
+    handleEditClick,
+    editTitleRef,
+    currentTaskId,
+    setCurrentTaskId,
   };
 };

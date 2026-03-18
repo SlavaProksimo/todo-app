@@ -1,27 +1,31 @@
 import { useRef, useEffect } from "react";
-const ModalEditTask = ({ close, newTaskTitle, onApply, open }) => {
+import useClickOutside from "@/hooks/useClickOutside";
+const ModalEditTask = ({ close, onApply, open, initialValue }) => {
   const inputRef = useRef(null);
+  //Кастомный хук для закрытия модалки
+  const modalRef = useClickOutside(() => {
+    if (open) {
+      close();
+    }
+  });
+
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
+      inputRef.current.value = initialValue;
     }
-  }, [open]);
+  }, [open, initialValue]);
+
+  if (!open) return null;
   return (
     <>
       <div className="overlay"></div>
-      <div
-        className="todo-add__general-box"
-        onMouseDown={(e) => e.stopPropagation()}
-      >
+      <div className="todo-add__general-box" ref={modalRef}>
         <div className="todo-add__box">
           <h2 className="todo-add__title">Edit Note</h2>
           <input
             className="todo-add__input"
             placeholder="Edit your note..."
-            defaultValue={newTaskTitle.current}
-            onInput={(e) => {
-              newTaskTitle.current = e.target.value;
-            }}
             ref={inputRef}
           />
           <div className="todo-add__btn-box">
@@ -35,7 +39,7 @@ const ModalEditTask = ({ close, newTaskTitle, onApply, open }) => {
             <button
               className="todo-add__btn btn-right"
               type="button"
-              onClick={onApply}
+              onClick={() => onApply(inputRef.current.value)}
             >
               Save
             </button>

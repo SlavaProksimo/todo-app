@@ -1,6 +1,6 @@
 import TodoItem from "../todo-item/TodoItem";
 
-const NewTasks = ({ tasks, setTasks, setOpen, taskToEdit, newTaskTitle }) => {
+const NewTasks = ({ tasks, setTasks, setOpen, onEditClick }) => {
   return (
     <ul className="todo-list__ul">
       {tasks.map((task) => (
@@ -11,8 +11,7 @@ const NewTasks = ({ tasks, setTasks, setOpen, taskToEdit, newTaskTitle }) => {
             id={task.id}
             setTasks={setTasks}
             setOpen={setOpen}
-            newTaskTitle={newTaskTitle}
-            taskToEdit={taskToEdit}
+            onEditClick={onEditClick}
           />
           <hr />
         </div>

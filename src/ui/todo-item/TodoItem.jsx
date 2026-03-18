@@ -1,26 +1,16 @@
-import { useCallback, useContext } from "react";
+import { useCallback } from "react";
 import clsx from "clsx";
 
 const TodoItem = (props) => {
-  const {
-    title = "",
-    isDone,
-    setTasks,
-    setOpen,
-    taskToEdit,
-    newTaskTitle,
-    id,
-  } = props;
+  const { title = "", isDone, setTasks, id, onEditClick } = props;
 
   //Редактировать задачу
   const handleEditClick = useCallback(
     (e) => {
       e.stopPropagation();
-      newTaskTitle.current = title;
-      taskToEdit.current = id;
-      setOpen(true);
+      onEditClick(id, title);
     },
-    [title, newTaskTitle, taskToEdit, setOpen, id],
+    [title, id],
   );
   //Удалить задачу
   const onClickDelete = useCallback(() => {

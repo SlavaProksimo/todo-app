@@ -1,4 +1,4 @@
-import { ThemeContext } from "@/context/themeContext";
+import { ThemeContext } from "@/context/ThemeProvider";
 import { memo, useContext } from "react";
 
 const NotFound = () => {

@@ -1,28 +1,32 @@
 import { memo, useRef, useEffect } from "react";
-const TodoAdd = ({ close, newTaskTitle, onApply, open }) => {
+import useClickOutside from "@/hooks/useClickOutside";
+const TodoAdd = ({ close, onApply, open }) => {
   //Автофокус с помощью useRef
   const inputRef = useRef(null);
+  //кастомный хук
+  const modalRef = useClickOutside(() => {
+    if (open) {
+      close();
+    }
+  });
+
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
   }, [open]);
+
+  if (!open) return null;
+
   return (
     <>
       <div className="overlay"></div>
-      <div
-        className="todo-add__general-box"
-        onMouseDown={(e) => e.stopPropagation()}
-      >
+      <div className="todo-add__general-box" ref={modalRef}>
         <div className="todo-add__box">
           <h2 className="todo-add__title">New Note</h2>
           <input
             className="todo-add__input"
             placeholder="Input your note..."
-            defaultValue={newTaskTitle.current}
-            onInput={(e) => {
-              newTaskTitle.current = e.target.value;
-            }}
             ref={inputRef}
           />
           <div className="todo-add__btn-box">
@@ -36,7 +40,7 @@ const TodoAdd = ({ close, newTaskTitle, onApply, open }) => {
             <button
               className="todo-add__btn btn-right"
               type="button"
-              onClick={onApply}
+              onClick={() => onApply(inputRef.current.value)}
             >
               Apply
             </button>
