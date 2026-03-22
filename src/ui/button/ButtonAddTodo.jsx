@@ -1,11 +1,11 @@
 import { memo, useCallback } from "react";
-const ButtonAddTodo = ({ setOpen }) => {
+const ButtonAddTodo = ({ setIsAddModalOpen }) => {
   const onClickAddTodo = useCallback(
     (e) => {
       e.stopPropagation();
-      setOpen((prev) => !prev);
+      setIsAddModalOpen((prev) => !prev);
     },
-    [setOpen],
+    [setIsAddModalOpen],
   );
   return (
     <button className="btn btn-addTodo" type="button" onClick={onClickAddTodo}>

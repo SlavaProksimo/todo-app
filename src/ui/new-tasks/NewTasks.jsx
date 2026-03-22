@@ -1,6 +1,12 @@
 import TodoItem from "../todo-item/TodoItem";
 
-const NewTasks = ({ tasks, setTasks, setOpen, onEditClick }) => {
+const NewTasks = ({
+  tasks,
+  setTasks,
+  setIsAddModalOpen,
+  setIsEditModalOpen,
+  onEditClick,
+}) => {
   return (
     <ul className="todo-list__ul">
       {tasks.map((task) => (
@@ -10,7 +16,6 @@ const NewTasks = ({ tasks, setTasks, setOpen, onEditClick }) => {
             isDone={task.isDone}
             id={task.id}
             setTasks={setTasks}
-            setOpen={setOpen}
             onEditClick={onEditClick}
           />
           <hr />

@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useState } from "react";
 import ButtonAddTodo from "@/ui/button/ButtonAddTodo";
 import TodoAdd from "@/ui/todo-add/todoAdd";
 import NewTasks from "ui/new-tasks/NewTasks";
@@ -8,14 +8,17 @@ import { useTodos } from "@/hooks/use-todos";
 import ModalEditTask from "@/ui/edit-add/ModalEditTask";
 
 const HomePage = () => {
-  const [open, setOpen] = useState(false);
-
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
   //Закрыть модалку
-  const closeModal = () => {
-    setOpen(false);
-    editTitleRef.current = "";
+  const closeAddModal = () => {
+    setIsAddModalOpen(false);
   };
-
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingTask(null);
+  };
   const {
     tasks,
     setTasks,
@@ -27,9 +30,13 @@ const HomePage = () => {
     showNotFound,
     finalTodos,
     handleEditClick,
-    editTitleRef,
-    currentTaskId,
-  } = useTodos({ closeModal, open, setOpen });
+  } = useTodos({
+    closeAddModal,
+    closeEditModal,
+    setIsAddModalOpen,
+    setIsEditModalOpen,
+    setEditingTask,
+  });
 
   return (
     <div className="general-wrapper">
@@ -48,23 +55,28 @@ const HomePage = () => {
             <NewTasks
               tasks={finalTodos}
               setTasks={setTasks}
-              open={open}
-              setOpen={setOpen}
+              setIsAddModalOpen={setIsAddModalOpen}
+              setIsEditModalOpen={setIsEditModalOpen}
               onEditClick={handleEditClick}
             />
           </div>
-          <ButtonAddTodo open={open} setOpen={setOpen} />
+          <ButtonAddTodo setIsAddModalOpen={setIsAddModalOpen} />
         </div>
       </div>
-      {open && currentTaskId === null && (
-        <TodoAdd close={closeModal} onApply={addNewTask} open={open} />
+
+      {isAddModalOpen && (
+        <TodoAdd
+          close={closeAddModal}
+          onApply={addNewTask}
+          open={isAddModalOpen}
+        />
       )}
-      {open && currentTaskId !== null && (
+      {isEditModalOpen && editingTask && (
         <ModalEditTask
-          close={closeModal}
-          onApply={updateTask}
-          open={open}
-          initialValue={editTitleRef.current}
+          close={closeEditModal}
+          onApply={(newTitle) => updateTask(editingTask.id, newTitle)}
+          open={isEditModalOpen}
+          initialValue={editingTask.title}
         />
       )}
     </div>

@@ -10,7 +10,7 @@ const TodoItem = (props) => {
       e.stopPropagation();
       onEditClick(id, title);
     },
-    [title, id],
+    [title, id, onEditClick],
   );
   //Удалить задачу
   const onClickDelete = useCallback(() => {

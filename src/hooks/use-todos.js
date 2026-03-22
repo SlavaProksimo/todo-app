@@ -1,32 +1,29 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-export const useTodos = ({ closeModal, open, setOpen }) => {
-  const getDataFromLocalStorage = () => {
-    try {
-      const savedTasks = localStorage.getItem("tasks");
-      if (savedTasks) {
-        return JSON.parse(savedTasks);
-      }
-      return [];
-    } catch (error) {
-      console.error("Ошибка LocalStorage");
-      return [];
+import { useCallback, useEffect, useMemo, useState } from "react";
+const getDataFromLocalStorage = () => {
+  try {
+    const savedTasks = localStorage.getItem("tasks");
+    if (savedTasks) {
+      return JSON.parse(savedTasks);
     }
-  };
+    return [];
+  } catch (error) {
+    console.error("Ошибка LocalStorage");
+    return [];
+  }
+};
 
+export const useTodos = ({
+  closeAddModal,
+  closeEditModal,
+  setIsEditModalOpen,
+  setEditingTask,
+}) => {
   //Сохраняем тудушки после перезагрузки страницы
   const [tasks, setTasks] = useState(getDataFromLocalStorage());
 
   const [searchTask, setSearchTask] = useState("");
   const [filter, setFilter] = useState("All");
 
-  const [currentTaskId, setCurrentTaskId] = useState(null); // Для редактирование задачи
-  // Функция для обработки клика по редактированию
-  const editTitleRef = useRef("");
-  const handleEditClick = (taskId, taskTitle) => {
-    setCurrentTaskId(taskId);
-    editTitleRef.current = taskTitle; // Сохраняем заголовок
-    setOpen(true);
-  };
   //Сохраняем тудушки после перезагрузки страницы
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -42,33 +39,33 @@ export const useTodos = ({ closeModal, open, setOpen }) => {
           isDone: false,
         };
         setTasks((prev) => [...prev, newTask]);
-        closeModal();
+        closeAddModal();
       }
     },
-    [closeModal],
+    [closeAddModal],
   );
   // Редактируем задачу
   const updateTask = useCallback(
-    (title) => {
-      if (currentTaskId !== null) {
-        const updatedTasks = tasks.map((task) => {
-          if (task.id === currentTaskId && title.trim().length > 0) {
-            return {
-              ...task,
-              title: title,
-            };
-          }
-          return task;
-        });
-        setTasks(updatedTasks);
-        closeModal();
-        setCurrentTaskId(null);
-        editTitleRef.current = "";
+    (taskId, newTitle) => {
+      if (newTitle?.trim().length > 0) {
+        setTasks((prev) =>
+          prev.map((task) =>
+            task.id === taskId ? { ...task, title: newTitle.trim() } : task,
+          ),
+        );
+        closeEditModal();
       }
     },
-    [tasks, closeModal, currentTaskId],
+    [closeEditModal],
   );
-
+  // Обработчик клика на редактирование
+  const handleEditClick = useCallback(
+    (taskId, taskTitle) => {
+      setEditingTask({ id: taskId, title: taskTitle });
+      setIsEditModalOpen(true);
+    },
+    [setEditingTask, setIsEditModalOpen],
+  );
   const handleInputChange = (event) => {
     const value = event.target.value;
     setSearchTask(value);
@@ -95,8 +92,6 @@ export const useTodos = ({ closeModal, open, setOpen }) => {
     }
   }, [filter, filteredTodos]);
 
-  const finalTodos = filteredBySelect;
-
   return {
     tasks,
     setTasks,
@@ -106,10 +101,7 @@ export const useTodos = ({ closeModal, open, setOpen }) => {
     updateTask,
     handleInputChange,
     showNotFound,
-    finalTodos,
+    finalTodos: filteredBySelect,
     handleEditClick,
-    editTitleRef,
-    currentTaskId,
-    setCurrentTaskId,
   };
 };

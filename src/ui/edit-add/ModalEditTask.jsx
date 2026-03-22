@@ -12,7 +12,7 @@ const ModalEditTask = ({ close, onApply, open, initialValue }) => {
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
-      inputRef.current.value = initialValue;
+      inputRef.current.value = initialValue || "";
     }
   }, [open, initialValue]);
 
