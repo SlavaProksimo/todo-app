@@ -1,8 +1,12 @@
-const ButtonAddTodo = ({ setOpen }) => {
-  const onClickAddTodo = (e) => {
-    e.stopPropagation();
-    setOpen((prev) => !prev);
-  };
+import { memo, useCallback } from "react";
+const ButtonAddTodo = ({ setIsAddModalOpen }) => {
+  const onClickAddTodo = useCallback(
+    (e) => {
+      e.stopPropagation();
+      setIsAddModalOpen((prev) => !prev);
+    },
+    [setIsAddModalOpen],
+  );
   return (
     <button className="btn btn-addTodo" type="button" onClick={onClickAddTodo}>
       <svg
@@ -22,4 +26,4 @@ const ButtonAddTodo = ({ setOpen }) => {
     </button>
   );
 };
-export default ButtonAddTodo;
+export default memo(ButtonAddTodo);

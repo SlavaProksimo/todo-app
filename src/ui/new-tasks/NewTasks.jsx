@@ -3,23 +3,20 @@ import TodoItem from "../todo-item/TodoItem";
 const NewTasks = ({
   tasks,
   setTasks,
-  setOpen,
-  setNewTaskTitle,
-  setTaskToEdit,
+  setIsAddModalOpen,
+  setIsEditModalOpen,
+  onEditClick,
 }) => {
   return (
     <ul className="todo-list__ul">
-      {tasks.map((task, index) => (
-        <div key={index}>
+      {tasks.map((task) => (
+        <div key={task.id}>
           <TodoItem
             title={task.title}
             isDone={task.isDone}
-            index={index}
-            tasks={tasks}
+            id={task.id}
             setTasks={setTasks}
-            setOpen={setOpen}
-            setNewTaskTitle={setNewTaskTitle}
-            setTaskToEdit={setTaskToEdit}
+            onEditClick={onEditClick}
           />
           <hr />
         </div>

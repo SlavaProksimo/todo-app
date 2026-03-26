@@ -8,20 +8,20 @@ import { useTodos } from "@/hooks/use-todos";
 import ModalEditTask from "@/ui/edit-add/ModalEditTask";
 
 const HomePage = () => {
-  const [open, setOpen] = useState(false);
-
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
   //Закрыть модалку
-  const closeModal = () => {
-    setOpen(false);
-    setNewTaskTitle("");
-    setTaskToEdit(null);
+  const closeAddModal = () => {
+    setIsAddModalOpen(false);
   };
-
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingTask(null);
+  };
   const {
     tasks,
     setTasks,
-    newTaskTitle,
-    setNewTaskTitle,
     searchTask,
     setFilter,
     addNewTask,
@@ -29,12 +29,17 @@ const HomePage = () => {
     handleInputChange,
     showNotFound,
     finalTodos,
-    setTaskToEdit,
-    taskToEdit,
-  } = useTodos({ closeModal });
+    handleEditClick,
+  } = useTodos({
+    closeAddModal,
+    closeEditModal,
+    setIsAddModalOpen,
+    setIsEditModalOpen,
+    setEditingTask,
+  });
 
   return (
-    <div className="general-wrapper" onMouseDown={closeModal}>
+    <div className="general-wrapper">
       <div className="container">
         <div className="todo">
           <h1 className="todo-title">TODO LIST</h1>
@@ -50,30 +55,28 @@ const HomePage = () => {
             <NewTasks
               tasks={finalTodos}
               setTasks={setTasks}
-              open={open}
-              setOpen={setOpen}
-              setNewTaskTitle={setNewTaskTitle}
-              newTaskTitle={newTaskTitle}
-              setTaskToEdit={setTaskToEdit}
+              setIsAddModalOpen={setIsAddModalOpen}
+              setIsEditModalOpen={setIsEditModalOpen}
+              onEditClick={handleEditClick}
             />
           </div>
-          <ButtonAddTodo open={open} setOpen={setOpen} />
+          <ButtonAddTodo setIsAddModalOpen={setIsAddModalOpen} />
         </div>
       </div>
-      {open && taskToEdit === null && (
+
+      {isAddModalOpen && (
         <TodoAdd
-          close={closeModal}
-          newTaskTitle={newTaskTitle}
-          setNewTaskTitle={setNewTaskTitle}
+          close={closeAddModal}
           onApply={addNewTask}
+          open={isAddModalOpen}
         />
       )}
-      {open && taskToEdit !== null && (
+      {isEditModalOpen && editingTask && (
         <ModalEditTask
-          close={closeModal}
-          newTaskTitle={newTaskTitle}
-          setNewTaskTitle={setNewTaskTitle}
-          onApply={updateTask}
+          close={closeEditModal}
+          onApply={(newTitle) => updateTask(editingTask.id, newTitle)}
+          open={isEditModalOpen}
+          initialValue={editingTask.title}
         />
       )}
     </div>

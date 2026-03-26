@@ -1,35 +1,32 @@
+import { useCallback } from "react";
+import clsx from "clsx";
+
 const TodoItem = (props) => {
-  const {
-    title = "",
-    isDone,
-    index,
-    tasks,
-    setTasks,
-    setOpen,
-    setTaskToEdit,
-    setNewTaskTitle,
-  } = props;
+  const { title = "", isDone, setTasks, id, onEditClick } = props;
 
   //Редактировать задачу
-  const handleEditClick = (e) => {
-    e.stopPropagation();
-    setNewTaskTitle(title);
-    setTaskToEdit(index);
-    setOpen(true);
-  };
+  const handleEditClick = useCallback(
+    (e) => {
+      e.stopPropagation();
+      onEditClick(id, title);
+    },
+    [title, id, onEditClick],
+  );
   //Удалить задачу
-  const onClickDelete = () => {
-    const deleteTask = tasks.filter((t, i) => i !== index);
-    setTasks(deleteTask);
-  };
-  const handleCheckboxChange = (event) => {
-    const updatedTasks = [...tasks];
-    updatedTasks[index] = {
-      ...updatedTasks[index],
-      isDone: event.target.checked,
-    };
-    setTasks(updatedTasks);
-  };
+  const onClickDelete = useCallback(() => {
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+  }, [setTasks, id]);
+  //отмечаем галочкой
+  const handleCheckboxChange = useCallback(
+    (event) => {
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === id ? { ...task, isDone: event.target.checked } : task,
+        ),
+      );
+    },
+    [setTasks, id],
+  );
 
   return (
     <li>
@@ -41,12 +38,11 @@ const TodoItem = (props) => {
           checked={isDone}
         />
         <span
-          style={{
-            textDecoration: isDone ? "line-through" : "none",
-            color: isDone ? "#25252580" : "",
-          }}
+          className={clsx({
+            "todo-list__span": true,
+            "todo-title--completed": isDone,
+          })}
         >
-          {" "}
           {title}
         </span>
       </div>

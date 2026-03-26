@@ -1,7 +1,8 @@
 import ButtonTheme from "../button/ButtonTheme";
 import Select from "../select/Select";
+import { memo } from "react";
 
-const Search = ({ onSearchClick, onInputChange, value, tasks, setFilter }) => {
+const Search = ({ onSearchClick, onInputChange, value, setFilter }) => {
   return (
     <div className="todo-search__block">
       <div className="input-svg">
@@ -28,9 +29,9 @@ const Search = ({ onSearchClick, onInputChange, value, tasks, setFilter }) => {
           />
         </svg>
       </div>
-      <Select tasks={tasks} setFilter={setFilter} />
+      <Select setFilter={setFilter} />
       <ButtonTheme />
     </div>
   );
 };
-export default Search;
+export default memo(Search);
