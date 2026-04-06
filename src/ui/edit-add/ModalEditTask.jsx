@@ -1,7 +1,22 @@
-import { useRef, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import useClickOutside from "@/hooks/useClickOutside";
+import { useValidation } from "@/context/ValidationProvider";
+import clsx from "clsx";
 const ModalEditTask = ({ close, onApply, open, initialValue }) => {
-  const inputRef = useRef(null);
+  const { forTask } = useValidation();
+
+  const {
+    handleSubmit,
+    reset,
+    register,
+    formState: { errors },
+  } = useForm({
+    defaultValues: { todoText: initialValue || "" },
+    mode: "onChange",
+  });
+
+  const hasErrorTodoText = !!errors["todoText"];
+  const todoErrorMessage = errors["todoText"]?.message;
   //Кастомный хук для закрытия модалки
   const modalRef = useClickOutside(() => {
     if (open) {
@@ -9,14 +24,17 @@ const ModalEditTask = ({ close, onApply, open, initialValue }) => {
     }
   });
 
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.value = initialValue || "";
+  // Обработчик отправки формы
+  const onSubmit = (data) => {
+    if (data.todoText && data.todoText.trim().length > 0) {
+      onApply(data.todoText);
+      reset(); // Очищаем форму после добавления
+      close(); // Закрываем модалку
     }
-  }, [open, initialValue]);
+  };
 
   if (!open) return null;
+
   return (
     <>
       <div className="overlay"></div>
@@ -24,10 +42,19 @@ const ModalEditTask = ({ close, onApply, open, initialValue }) => {
         <div className="todo-add__box">
           <h2 className="todo-add__title">Edit Note</h2>
           <input
-            className="todo-add__input"
+            autoFocus={open}
+            className={clsx({
+              "todo-add__input": true,
+              "todo-add__input--error": hasErrorTodoText,
+            })}
             placeholder="Edit your note..."
-            ref={inputRef}
+            {...register("todoText", forTask)}
           />
+          {hasErrorTodoText && todoErrorMessage && (
+            <div className="error-message todo__error-message">
+              {todoErrorMessage}
+            </div>
+          )}
           <div className="todo-add__btn-box">
             <button
               className="todo-add__btn btn-left"
@@ -39,7 +66,7 @@ const ModalEditTask = ({ close, onApply, open, initialValue }) => {
             <button
               className="todo-add__btn btn-right"
               type="button"
-              onClick={() => onApply(inputRef.current.value)}
+              onClick={handleSubmit(onSubmit)}
             >
               Save
             </button>

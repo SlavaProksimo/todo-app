@@ -1,20 +1,35 @@
-import { memo, useRef, useEffect } from "react";
+import { memo } from "react";
 import useClickOutside from "@/hooks/useClickOutside";
+import { useForm } from "react-hook-form";
+import clsx from "clsx";
+import { useValidation } from "@/context/ValidationProvider";
 const TodoAdd = ({ close, onApply, open }) => {
-  //Автофокус с помощью useRef
-  const inputRef = useRef(null);
-  //кастомный хук
+  const { forTask } = useValidation();
+  const {
+    handleSubmit,
+    reset,
+    register,
+    formState: { errors },
+  } = useForm({ defaultValues: { todoText: "" }, mode: "onChange" });
+
+  const hasErrorTodoText = !!errors["todoText"];
+  const todoErrorMessage = errors["todoText"]?.message;
+
+  // кастомный хук
   const modalRef = useClickOutside(() => {
     if (open) {
       close();
     }
   });
 
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
+  // Обработчик отправки формы
+  const onSubmit = (data) => {
+    if (data.todoText && data.todoText.trim().length > 0) {
+      onApply(data.todoText);
+      reset(); // Очищаем форму после добавления
+      close(); // Закрываем модалку
     }
-  }, [open]);
+  };
 
   if (!open) return null;
 
@@ -25,10 +40,20 @@ const TodoAdd = ({ close, onApply, open }) => {
         <div className="todo-add__box">
           <h2 className="todo-add__title">New Note</h2>
           <input
-            className="todo-add__input"
+            autoFocus={open}
+            type="text"
+            className={clsx({
+              "todo-add__input": true,
+              "todo-add__input--error": hasErrorTodoText,
+            })}
             placeholder="Input your note..."
-            ref={inputRef}
+            {...register("todoText", forTask)}
           />
+          {hasErrorTodoText && todoErrorMessage && (
+            <div className="error-message todo__error-message">
+              {todoErrorMessage}
+            </div>
+          )}
           <div className="todo-add__btn-box">
             <button
               className="todo-add__btn btn-left"
@@ -40,7 +65,7 @@ const TodoAdd = ({ close, onApply, open }) => {
             <button
               className="todo-add__btn btn-right"
               type="button"
-              onClick={() => onApply(inputRef.current.value)}
+              onClick={handleSubmit(onSubmit)}
             >
               Apply
             </button>
