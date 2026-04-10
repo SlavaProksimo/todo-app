@@ -2,29 +2,25 @@ import clsx from "clsx";
 import ButtonTheme from "../button/ButtonTheme";
 import Select from "../select/Select";
 import { memo, useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
 import useClickOutside from "@/hooks/useClickOutside";
-import { useValidation } from "@/context/ValidationProvider";
+import { useSearchForm } from "@/hooks/useSearchForm";
+
 const Search = ({ onInputChange, setFilter }) => {
-  const { forSearch } = useValidation();
   const [activeSearchInput, setIsActiveSearchInput] = useState(false);
 
   const {
     register,
     watch,
     formState: { errors },
-  } = useForm({
-    defaultValues: { search: "" },
-    mode: "onChange",
-  });
+  } = useSearchForm({ text: "" });
 
   // Отслеживаем значение
-  const myInput = watch("search", "");
+  const myInput = watch("text", "");
   //  Получаем есть ли ошибка
-  const hasError = !!errors["search"];
+  const hasError = !!errors["text"];
 
   //  Получаем сообщение об ошибке
-  const errorMessage = errors["search"]?.message;
+  const errorMessage = errors["text"]?.message;
 
   const rootRef = useClickOutside(() => {});
   // Отслеживаем появления фокуса
@@ -70,7 +66,7 @@ const Search = ({ onInputChange, setFilter }) => {
         <input
           onBlur={checkBlur}
           onFocus={checkFocus}
-          {...register("search", forSearch)}
+          {...register("text")}
           className={clsx({
             "input todo-search__block-input": true,
             "input todo-search__block-input--error": hasError,

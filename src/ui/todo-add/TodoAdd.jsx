@@ -1,19 +1,18 @@
 import { memo } from "react";
 import useClickOutside from "@/hooks/useClickOutside";
-import { useForm } from "react-hook-form";
+import { useTextForm } from "@/hooks/useSearchForm";
 import clsx from "clsx";
-import { useValidation } from "@/context/ValidationProvider";
+
 const TodoAdd = ({ close, onApply, open }) => {
-  const { forTask } = useValidation();
   const {
     handleSubmit,
     reset,
     register,
     formState: { errors },
-  } = useForm({ defaultValues: { todoText: "" }, mode: "onChange" });
+  } = useTextForm({ defaultValues: { text: "" }, mode: "onChange" });
 
-  const hasErrorTodoText = !!errors["todoText"];
-  const todoErrorMessage = errors["todoText"]?.message;
+  const hasErrorTodoText = !!errors["text"];
+  const todoErrorMessage = errors["text"]?.message;
 
   // кастомный хук
   const modalRef = useClickOutside(() => {
@@ -24,8 +23,8 @@ const TodoAdd = ({ close, onApply, open }) => {
 
   // Обработчик отправки формы
   const onSubmit = (data) => {
-    if (data.todoText && data.todoText.trim().length > 0) {
-      onApply(data.todoText);
+    if (data.text && data.text.trim().length > 0) {
+      onApply(data.text);
       reset(); // Очищаем форму после добавления
       close(); // Закрываем модалку
     }
@@ -47,7 +46,7 @@ const TodoAdd = ({ close, onApply, open }) => {
               "todo-add__input--error": hasErrorTodoText,
             })}
             placeholder="Input your note..."
-            {...register("todoText", forTask)}
+            {...register("text")}
           />
           {hasErrorTodoText && todoErrorMessage && (
             <div className="error-message todo__error-message">

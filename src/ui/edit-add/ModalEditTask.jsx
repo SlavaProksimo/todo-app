@@ -1,22 +1,17 @@
-import { useForm } from "react-hook-form";
 import useClickOutside from "@/hooks/useClickOutside";
-import { useValidation } from "@/context/ValidationProvider";
+
+import { useTextForm } from "@/hooks/useSearchForm";
 import clsx from "clsx";
 const ModalEditTask = ({ close, onApply, open, initialValue }) => {
-  const { forTask } = useValidation();
-
   const {
     handleSubmit,
     reset,
     register,
     formState: { errors },
-  } = useForm({
-    defaultValues: { todoText: initialValue || "" },
-    mode: "onChange",
-  });
+  } = useTextForm({ text: initialValue || "" });
 
-  const hasErrorTodoText = !!errors["todoText"];
-  const todoErrorMessage = errors["todoText"]?.message;
+  const hasErrorTodoText = !!errors["text"];
+  const todoErrorMessage = errors["text"]?.message;
   //Кастомный хук для закрытия модалки
   const modalRef = useClickOutside(() => {
     if (open) {
@@ -26,8 +21,8 @@ const ModalEditTask = ({ close, onApply, open, initialValue }) => {
 
   // Обработчик отправки формы
   const onSubmit = (data) => {
-    if (data.todoText && data.todoText.trim().length > 0) {
-      onApply(data.todoText);
+    if (data.text && data.text.trim().length > 0) {
+      onApply(data.text);
       reset(); // Очищаем форму после добавления
       close(); // Закрываем модалку
     }
@@ -48,7 +43,7 @@ const ModalEditTask = ({ close, onApply, open, initialValue }) => {
               "todo-add__input--error": hasErrorTodoText,
             })}
             placeholder="Edit your note..."
-            {...register("todoText", forTask)}
+            {...register("text")}
           />
           {hasErrorTodoText && todoErrorMessage && (
             <div className="error-message todo__error-message">
