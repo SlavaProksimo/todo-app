@@ -1,7 +1,7 @@
 import useClickOutside from "@/hooks/useClickOutside";
-
 import { useTextForm } from "@/hooks/useSearchForm";
 import clsx from "clsx";
+
 const ModalEditTask = ({ close, onApply, open, initialValue }) => {
   const {
     handleSubmit,
@@ -21,11 +21,12 @@ const ModalEditTask = ({ close, onApply, open, initialValue }) => {
 
   // Обработчик отправки формы
   const onSubmit = (data) => {
-    if (data.text && data.text.trim().length > 0) {
-      onApply(data.text);
-      reset(); // Очищаем форму после добавления
-      close(); // Закрываем модалку
+    if (data?.text?.trim()?.length === 0) {
+      return;
     }
+    onApply(data.text);
+    reset(); // Очищаем форму после добавления
+    close(); // Закрываем модалку
   };
 
   if (!open) return null;
@@ -45,7 +46,7 @@ const ModalEditTask = ({ close, onApply, open, initialValue }) => {
             placeholder="Edit your note..."
             {...register("text")}
           />
-          {hasErrorTodoText && todoErrorMessage && (
+          {todoErrorMessage && (
             <div className="error-message todo__error-message">
               {todoErrorMessage}
             </div>
@@ -58,13 +59,15 @@ const ModalEditTask = ({ close, onApply, open, initialValue }) => {
             >
               Cancel
             </button>
-            <button
-              className="todo-add__btn btn-right"
-              type="button"
-              onClick={handleSubmit(onSubmit)}
-            >
-              Save
-            </button>
+            <form>
+              <button
+                className="todo-add__btn btn-right"
+                type="button"
+                onClick={handleSubmit(onSubmit)}
+              >
+                Save
+              </button>
+            </form>
           </div>
         </div>
       </div>

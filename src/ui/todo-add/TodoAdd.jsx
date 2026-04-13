@@ -48,7 +48,7 @@ const TodoAdd = ({ close, onApply, open }) => {
             placeholder="Input your note..."
             {...register("text")}
           />
-          {hasErrorTodoText && todoErrorMessage && (
+          {todoErrorMessage && (
             <div className="error-message todo__error-message">
               {todoErrorMessage}
             </div>
@@ -61,13 +61,15 @@ const TodoAdd = ({ close, onApply, open }) => {
             >
               Cancel
             </button>
-            <button
-              className="todo-add__btn btn-right"
-              type="button"
-              onClick={handleSubmit(onSubmit)}
-            >
-              Apply
-            </button>
+            <form>
+              <button
+                className="todo-add__btn btn-right"
+                type="submit"
+                onClick={handleSubmit(onSubmit)}
+              >
+                Apply
+              </button>
+            </form>
           </div>
         </div>
       </div>
