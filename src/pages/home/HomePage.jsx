@@ -5,7 +5,7 @@ import Search from "@/ui/search/search";
 import NotFound from "@/ui/not-found/NotFound";
 import { useTodos } from "@/hooks/use-todos";
 import ModalEditTask from "@/ui/edit-add/ModalEditTask";
-import TodoAdd from "@/ui/todo-add/TodoAdd";
+import TodoAdd from "@/ui/todo-add/TodoAdd.jsx";
 const HomePage = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
