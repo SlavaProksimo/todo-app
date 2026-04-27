@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ButtonAddTodo from "@/ui/button/ButtonAddTodo";
-import TodoAdd from "@/ui/todo-add/TodoAdd";
+import todoAdd from "@/ui/todo-add/todoadd";
 import NewTasks from "@/ui/new-tasks/NewTasks";
 import Search from "@/ui/search/Search";
 import NotFound from "@/ui/not-found/NotFound";
@@ -64,7 +64,7 @@ const HomePage = () => {
       </div>
 
       {isAddModalOpen && (
-        <TodoAdd
+        <todoAdd
           close={closeAddModal}
           onApply={addNewTask}
           open={isAddModalOpen}

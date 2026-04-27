@@ -6,7 +6,7 @@ import useClickOutside from "@/hooks/useClickOutside";
 import FormInput from "../form-input/FormInput";
 import clsx from "clsx";
 
-const TodoAdd = ({ close, onApply, open }) => {
+const todoAdd = ({ close, onApply, open }) => {
   const methods = useForm({
     resolver: zodResolver(textSchema),
     defaultValues: { text: "" },
@@ -77,4 +77,4 @@ const TodoAdd = ({ close, onApply, open }) => {
   );
 };
 
-export default memo(TodoAdd);
+export default memo(todoAdd);
