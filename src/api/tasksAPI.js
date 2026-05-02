@@ -1,5 +1,5 @@
 // Работа с сервером
-const URL = "http://localhost:3001/tasks";
+const URL = import.meta.env.VITE_API_URL;
 
 const headers = {
   "Content-Type": "application/json",
@@ -7,30 +7,47 @@ const headers = {
 
 const tasksAPI = {
   // Получаем все задачи
-  getAll: () => {
-    return fetch(URL).then((response) => response.json());
+  getAll: async () => {
+    // return fetch(URL).then((response) => response.json());
+    const response = await fetch(URL);
+    return response.json();
   },
   // Добавление задач на сервер
-  add: (task) => {
-    return fetch(URL, {
+  add: async (task) => {
+    // return fetch(URL, {
+    //   method: "POST",
+    //   headers,
+    //   body: JSON.stringify(task),
+    // }).then((response) => response.json());
+    const response = await fetch(URL, {
       method: "POST",
       headers,
       body: JSON.stringify(task),
-    }).then((response) => response.json());
+    });
+    return response.json();
   },
   // Удаление
-  delete: (id) => {
-    return fetch(`${URL}/${id}`, {
+  delete: async (id) => {
+    // return fetch(`${URL}/${id}`, {
+    //   method: "DELETE",
+    // });
+    await fetch(`${URL}/${id}`, {
       method: "DELETE",
     });
   },
   // изменение состояние таски
-  toggleComplete: (id, newIsDoneValue) => {
-    return fetch(`${URL}/${id}`, {
+  toggleComplete: async (id, newIsDoneValue) => {
+    // return fetch(`${URL}/${id}`, {
+    //   method: "PATCH",
+    //   headers,
+    //   body: JSON.stringify({ isDone: newIsDoneValue }),
+    // });
+    const response = await fetch(`${URL}/${id}`, {
       method: "PATCH",
       headers,
       body: JSON.stringify({ isDone: newIsDoneValue }),
     });
+    return response.json();
   },
 };
 
